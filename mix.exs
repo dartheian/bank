@@ -25,7 +25,8 @@ defmodule Bank.MixProject do
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.3", only: [:dev, :test], runtime: false},
       {:domo, "~> 1.5"},
-      {:typed_struct, "~> 0.3.0"}
+      {:typed_struct, "~> 0.3.0"},
+      {:uniq, "~> 0.6.0"}
     ]
   end
 end
