@@ -26,7 +26,7 @@ defmodule Bank.MixProject do
       {:dialyxir, "~> 1.3", only: [:dev, :test], runtime: false},
       {:domo, "~> 1.5"},
       {:typed_struct, "~> 0.3.0"},
-      {:uniq, "~> 0.6.0"}
+      {:uuid, github: "okeuday/uuid"}
     ]
   end
 end
