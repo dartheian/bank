@@ -10,6 +10,10 @@ defmodule Domain.ValueObjects.MoneyTest do
       assert {:error, [amount: _]} = Money.new(amount: -10, currency: :eur)
     end
 
+    test "fails if the amount is zero" do
+      assert {:error, [amount: _]} = Money.new(amount: 0, currency: :eur)
+    end
+
     test "fails if the amount is not an integer" do
       assert {:error, [amount: _]} = Money.new(amount: 1.0, currency: :eur)
     end

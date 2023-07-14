@@ -1,0 +1,23 @@
+# Untitled notebook
+
+```elixir
+Mix.install(
+  [
+    {:bank, path: __DIR__, env: :dev}
+  ],
+  config_path: :bank,
+  lockfile: :bank
+)
+```
+
+## Start
+
+```elixir
+Bank.Application.start_link()
+```
+
+```elixir
+alias Bank.Commands.OpenBankAccount
+
+Bank.Application.dispatch(OpenBankAccount.new!(id: Uuid.new()))
+```

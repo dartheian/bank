@@ -9,7 +9,9 @@ defmodule Bank.MixProject do
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       compilers: [:domo_compiler] ++ Mix.compilers(),
-      test_coverage: [ignore_modules: [~r/\.TypeEnsurer$/]]
+      test_coverage: [ignore_modules: [~r/\.TypeEnsurer$/]],
+      dialyzer: [plt_add_apps: [:jason]],
+      elixirc_paths: elixirc_paths(Mix.env())
     ]
   end
 
@@ -22,6 +24,8 @@ defmodule Bank.MixProject do
 
   defp deps do
     [
+      {:commanded_extreme_adapter, "~> 1.1"},
+      {:commanded, "~> 1.4"},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.3", only: [:dev, :test], runtime: false},
       {:domo, "~> 1.5"},
@@ -29,4 +33,7 @@ defmodule Bank.MixProject do
       {:uuid, github: "okeuday/uuid"}
     ]
   end
+
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(_), do: ["lib"]
 end

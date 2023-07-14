@@ -5,12 +5,7 @@ defmodule Bank.Application do
 
   @impl true
   def start(_type, _args) do
-    children = [
-      # Starts a worker by calling: Bank.Worker.start_link(arg)
-      # {Bank.Worker, arg}
-    ]
-
     opts = [strategy: :one_for_one, name: Bank.Supervisor]
-    Supervisor.start_link(children, opts)
+    Supervisor.start_link([Bank.CommandedApplication], opts)
   end
 end

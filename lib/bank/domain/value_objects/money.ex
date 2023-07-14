@@ -1,21 +1,30 @@
 defmodule Bank.Domain.ValueObjects.Money do
   @moduledoc """
+  This module contains definitions useful for working with money.
+
+  ## Examples
+
       iex> new!(amount: 10, currency: :eur)
       %Money{amount: 10, currency: :eur}
 
       iex> new(amount: 10, currency: :eur)
       {:ok, %Money{amount: 10, currency: :eur}}
+
+      iex> new!(amount: 10, currency: :eur)
+      ...> |> sum(new!(amount: 5, currency: :eur))
+      {:ok, %Money{amount: 15, currency: :eur}}
+
+      iex> new!(amount: 10, currency: :eur)
+      ...> |> subtract(new!(amount: 5, currency: :eur))
+      {:ok, %Money{amount: 5, currency: :eur}}
   """
-  require Bank.Domain.Preconditions.Preconditions, as: Preconditions
 
   alias Bank.Domain.ValueObjects.Currency
 
   use TypedStruct
   use Domo
 
-  @type amount :: integer
-  precond amount: &Preconditions.is_non_negative_integer/1
-
+  @type amount :: pos_integer()
   @type currency :: Currency.t()
 
   typedstruct enforce: true do
@@ -24,8 +33,14 @@ defmodule Bank.Domain.ValueObjects.Money do
   end
 
   @doc """
+  ## Examples
+
+  Sum money of the same currency:
+
       iex> sum(new!(amount: 10, currency: :eur), new!(amount: 10, currency: :eur))
       {:ok, %Money{amount: 20, currency: :eur}}
+
+  Raises an error if the currencies are different:
 
       iex> sum(new!(amount: 10, currency: :eur), new!(amount: 10, currency: :usd))
       {:error, :incompatible_currencies}
@@ -38,11 +53,17 @@ defmodule Bank.Domain.ValueObjects.Money do
     do: {:error, :incompatible_currencies}
 
   @doc """
+  ## Examples
+
       iex> subtract(new!(amount: 10, currency: :eur), new!(amount: 10, currency: :eur))
       {:ok, %Money{amount: 0, currency: :eur}}
 
+  Raises an error if there is not enough money:
+
       iex> subtract(new!(amount: 10, currency: :eur), new!(amount: 20, currency: :eur))
       {:error, :insufficient_amount}
+
+  Raises an error if the currencies are different:
 
       iex> subtract(new!(amount: 10, currency: :eur), new!(amount: 10, currency: :usd))
       {:error, :incompatible_currencies}
