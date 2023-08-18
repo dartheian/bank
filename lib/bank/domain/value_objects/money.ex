@@ -45,7 +45,7 @@ defmodule Bank.Domain.ValueObjects.Money do
       iex> sum(new!(amount: 10, currency: :eur), new!(amount: 10, currency: :usd))
       {:error, :incompatible_currencies}
   """
-  @spec sum(t, t) :: {:ok, t} | {:error, :incompatible_currencies} | no_return
+  @spec sum(t, t) :: {:ok, t} | {:error, :incompatible_currencies}
   def sum(%__MODULE__{currency: currency} = left, %__MODULE__{currency: currency} = right),
     do: {:ok, %{left | amount: left.amount + right.amount}}
 
@@ -68,7 +68,7 @@ defmodule Bank.Domain.ValueObjects.Money do
       iex> subtract(new!(amount: 10, currency: :eur), new!(amount: 10, currency: :usd))
       {:error, :incompatible_currencies}
   """
-  @spec subtract(t, t) :: {:ok, t} | {:error, any}
+  @spec subtract(t, t) :: {:ok, t} | {:error, :insufficient_amount} |  {:error, :incompatible_currencies}
   def subtract(%__MODULE__{currency: currency} = left, %__MODULE__{currency: currency} = right)
       when left.amount >= right.amount,
       do: {:ok, %{left | amount: left.amount - right.amount}}
