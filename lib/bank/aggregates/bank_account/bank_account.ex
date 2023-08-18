@@ -16,21 +16,21 @@ defmodule Bank.Aggregates.BankAccount.BankAccount do
   end
 
   @doc """
-      iex> BankAccount.new(id: Uuid.from_string!("00000000-0000-0000-0000-000000000000"))
-      {:ok, %BankAccount{id: <<0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0>>, balances: %{}}}
+      iex> BankAccount.new(id: Uuid.from_string!("5593696b-5fe3-4d88-9260-1c07d7b5bbfb"))
+      {:ok, %BankAccount{id: <<85, 147, 105, 107, 95, 227, 77, 136, 146, 96, 28, 7, 215, 181, 187, 251>>, balances: %{}}}
   """
   def new(args), do: _new(Enum.concat(args, balances: %{}))
 
   @doc """
-      iex> BankAccount.new!(id: Uuid.from_string!("00000000-0000-0000-0000-000000000000"))
-      %BankAccount{id: <<0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0>>, balances: %{}}
+      iex> BankAccount.new!(id: Uuid.from_string!("5593696b-5fe3-4d88-9260-1c07d7b5bbfb"))
+      %BankAccount{id: <<85, 147, 105, 107, 95, 227, 77, 136, 146, 96, 28, 7, 215, 181, 187, 251>>, balances: %{}}
   """
   def new!(args), do: _new!(Enum.concat(args, balances: %{}))
 
   @doc """
-      iex> BankAccount.new!(id: Uuid.from_string!("00000000-0000-0000-0000-000000000000"))
+      iex> BankAccount.new!(id: Uuid.from_string!("5593696b-5fe3-4d88-9260-1c07d7b5bbfb"))
       ...> |> BankAccount.deposit!(Money.new!(amount: 10, currency: :eur))
-      %BankAccount{id: <<0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0>>, balances: %{eur: 10}}
+      %BankAccount{id: <<85, 147, 105, 107, 95, 227, 77, 136, 146, 96, 28, 7, 215, 181, 187, 251>>, balances: %{eur: 10}}
   """
   @spec deposit!(t, Money.t()) :: t | no_return()
   def deposit!(%__MODULE__{} = account, %Money{} = money) do
@@ -41,20 +41,25 @@ defmodule Bank.Aggregates.BankAccount.BankAccount do
   end
 
   @doc """
-      iex> BankAccount.new!(id: Uuid.from_string!("00000000-0000-0000-0000-000000000000"))
+      iex> BankAccount.new!(id: Uuid.from_string!("5593696b-5fe3-4d88-9260-1c07d7b5bbfb"))
+      ...> |> BankAccount.deposit!(Money.new!(amount: 10, currency: :eur))
+      ...> |> BankAccount.withdraw(Money.new!(amount: 5, currency: :eur))
+      {:ok, %BankAccount{id: <<85, 147, 105, 107, 95, 227, 77, 136, 146, 96, 28, 7, 215, 181, 187, 251>>, balances: %{eur: 5}}}
+
+      iex> BankAccount.new!(id: Uuid.from_string!("5593696b-5fe3-4d88-9260-1c07d7b5bbfb"))
       ...> |> BankAccount.deposit!(Money.new!(amount: 10, currency: :eur))
       ...> |> BankAccount.withdraw(Money.new!(amount: 10, currency: :eur))
-      {:ok, %BankAccount{id: <<0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0>>, balances: %{eur: 0}}}
+      {:ok, %BankAccount{id: <<85, 147, 105, 107, 95, 227, 77, 136, 146, 96, 28, 7, 215, 181, 187, 251>>, balances: %{}}}
 
   Raises an error if the currency is not present:
 
-      iex> BankAccount.new!(id: Uuid.from_string!("00000000-0000-0000-0000-000000000000"))
+      iex> BankAccount.new!(id: Uuid.from_string!("5593696b-5fe3-4d88-9260-1c07d7b5bbfb"))
       ...> |> BankAccount.withdraw(Money.new!(amount: 10, currency: :eur))
       {:error, :unavailable_currency}
 
   Raises an error if the balance is not sufficient:
 
-      iex> BankAccount.new!(id: Uuid.from_string!("00000000-0000-0000-0000-000000000000"))
+      iex> BankAccount.new!(id: Uuid.from_string!("5593696b-5fe3-4d88-9260-1c07d7b5bbfb"))
       ...> |> BankAccount.deposit!(Money.new!(amount: 5, currency: :eur))
       ...> |> BankAccount.withdraw(Money.new!(amount: 10, currency: :eur))
       {:error, :insufficient_balance}
@@ -64,6 +69,7 @@ defmodule Bank.Aggregates.BankAccount.BankAccount do
     case account.balances[money.currency] do
       nil -> {:error, :unavailable_currency}
       amount when amount < money.amount -> {:error, :insufficient_balance}
+      amount when amount == money.amount -> {:ok, update_in(account.balances, &Map.delete(&1, money.currency))}
       _ -> {:ok, update_in(account.balances[money.currency], &(&1 - money.amount))}
     end
   end
