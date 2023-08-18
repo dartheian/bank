@@ -29,11 +29,11 @@ defmodule Bank.Aggregates.BankAccount.BankAccount do
 
   @doc """
       iex> BankAccount.new!(id: Uuid.from_string!("5593696b-5fe3-4d88-9260-1c07d7b5bbfb"))
-      ...> |> BankAccount.deposit!(Money.new!(amount: 10, currency: :eur))
+      ...> |> BankAccount.deposit(Money.new!(amount: 10, currency: :eur))
       %BankAccount{id: <<85, 147, 105, 107, 95, 227, 77, 136, 146, 96, 28, 7, 215, 181, 187, 251>>, balances: %{eur: 10}}
   """
-  @spec deposit!(t, Money.t()) :: t | no_return()
-  def deposit!(%__MODULE__{} = account, %Money{} = money) do
+  @spec deposit(t, Money.t()) :: t
+  def deposit(%__MODULE__{} = account, %Money{} = money) do
     update_in(account.balances[money.currency], fn
       nil -> money.amount
       amount -> amount + money.amount
@@ -42,12 +42,12 @@ defmodule Bank.Aggregates.BankAccount.BankAccount do
 
   @doc """
       iex> BankAccount.new!(id: Uuid.from_string!("5593696b-5fe3-4d88-9260-1c07d7b5bbfb"))
-      ...> |> BankAccount.deposit!(Money.new!(amount: 10, currency: :eur))
+      ...> |> BankAccount.deposit(Money.new!(amount: 10, currency: :eur))
       ...> |> BankAccount.withdraw(Money.new!(amount: 5, currency: :eur))
       {:ok, %BankAccount{id: <<85, 147, 105, 107, 95, 227, 77, 136, 146, 96, 28, 7, 215, 181, 187, 251>>, balances: %{eur: 5}}}
 
       iex> BankAccount.new!(id: Uuid.from_string!("5593696b-5fe3-4d88-9260-1c07d7b5bbfb"))
-      ...> |> BankAccount.deposit!(Money.new!(amount: 10, currency: :eur))
+      ...> |> BankAccount.deposit(Money.new!(amount: 10, currency: :eur))
       ...> |> BankAccount.withdraw(Money.new!(amount: 10, currency: :eur))
       {:ok, %BankAccount{id: <<85, 147, 105, 107, 95, 227, 77, 136, 146, 96, 28, 7, 215, 181, 187, 251>>, balances: %{}}}
 
@@ -60,7 +60,7 @@ defmodule Bank.Aggregates.BankAccount.BankAccount do
   Raises an error if the balance is not sufficient:
 
       iex> BankAccount.new!(id: Uuid.from_string!("5593696b-5fe3-4d88-9260-1c07d7b5bbfb"))
-      ...> |> BankAccount.deposit!(Money.new!(amount: 5, currency: :eur))
+      ...> |> BankAccount.deposit(Money.new!(amount: 5, currency: :eur))
       ...> |> BankAccount.withdraw(Money.new!(amount: 10, currency: :eur))
       {:error, :insufficient_balance}
   """
